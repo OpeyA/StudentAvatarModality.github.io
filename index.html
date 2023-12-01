@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>Classroom Modality Avatar System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,500&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <!-- <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script> -->
+  <script>
+    "use strict";
+$(document).ready(function () {
+
+  let count = 126; // 126 bars meaning 18 for each 7 category
+
+  const prompts = [
+    {
+      question: "1. Are you the type of learner that prefers to be self-paced?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question:
+        "2. Do you usually need a few weeks to digest content before asking questions?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "3. Do you need quick feedback on class material presented?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "4. Do you work on campus?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "5. How many hours a week do you work on average?",
+      answers: [
+        {
+          text: "Less than 15",
+        },
+        {
+          text: "15-25",
+        },
+        {
+          text: "Above 25",
+        },
+      ],
+    },
+    {
+      question: "6. Do you have a commute longer than 30 mins to campus?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "7. How do you prefer to get help?",
+      answers: [
+        {
+          text: "Office Hours",
+        },
+        {
+          text: "Tutoring",
+        },
+        {
+          text: "Ask Classmates",
+        },
+      ],
+    },
+    {
+      question: "8. Do you easily get distracted in class?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "9. Do you prefer to work around a schedule and deadlines?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "10. Are you a student athlete?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question:
+        "11. Would you describe yourself as a highly independent learner?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question: "12. Do you perform better with live feedback?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question:
+        "13. Are you comfortable emailing your professors with questions?",
+      answers: [
+        {
+          text: "Yes",
+        },
+        {
+          text: "No",
+        },
+      ],
+    },
+    {
+      question:
+        "14. In the past, have online classes improved or worsened your performance?",
+      answers: [
+        {
+          text: "Improved",
+        },
+        {
+          text: "Worsened",
+        },
+      ],
+    },
+  ];
+  let ans;
+  let ansArr;
+  let shuffledQuestions, currentQuestionIndex;
+
+
+  function startQuiz() {
+    $(".strt-btn").click(function (e) {
+      e.stopPropagation();
+      $(".strt-btn").toggleClass("hide");
+      //$(".clr-btn").toggleClass("hide");
+      shuffledQuestions = prompts.sort();
+      currentQuestionIndex = 0;
+      $("#questionbox").toggleClass("hide");
+      changePrompt();
+      revealBtns();
+    });
+  }
+  function changePrompt() {
+    //resetState();
+    displayPrompt(shuffledQuestions[currentQuestionIndex]);
+  }
+
+  function displayPrompt(prompt) {
+    $("#question").text(`${prompt.question}`);
+    prompt.answers.forEach((answer) => {
+      $(".ans-btns").append(`<button class="btn"> ${answer.text} </button>`);
+      //$(".ans-btns").html(answer.text);
+    });
+    selectAnswer();
+  }
+
+  function resetState() {
+    //$(".nxt-btn").toggleClass("hide");
+    $("#answer-btns").empty();
+  }
+
+  const revealBtns = () => {
+    $('.nxt-btn').toggleClass('hide');
+    $('.clr-btn').toggleClass('hide');
+  };
+
+  startQuiz();
+  selectNext();
+
+  function selectAnswer() {
+    $('.btn').click(function (e) {
+      e.stopPropagation();
+      ans = $(this).text();
+      if (shuffledQuestions.length > currentQuestionIndex + 1) {
+        /*         $(".nxt-btn").toggleClass("hide");
+        $(".clr-btn").removeClass("hide"); */
+        //revealBtns();
+      } else {
+        $('#computeModality').toggleClass('hide');
+        $('#question').text(`Thank you! We are glad to have you as a student at DePaul!`);
+        $('.btn').toggleClass('hide');
+        revealBtns();
+      }
+      // $(".nxt-btn").toggleClass("hide");
+      $(this).css('background-color', '#99b7e6');
+      $(this).prop('disabled', true);
+    });
+
+    $('#clr-btn').click(function (e) {
+      $('.btn').css('background-color', 'buttonface');
+      $('.btn').prop('disabled', false);
+     });
+  }
+
+  function selectNext() {
+    ansArr = [];
+    $("#nxt-btn").click(function (e) {
+      ansArr.push(ans);
+      console.log(ansArr);
+      currentQuestionIndex++;
+      e.stopPropagation();
+      resetState();
+      console.log(currentQuestionIndex);
+      changePrompt();
+    });
+  }
+
+  $("#computeModality").click(function (e) {
+    for (let i = 0; i < ansArr.length; i++) {
+      //Question1
+      if (ansArr[i] == " Yes " && count > 0) {
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i] == " No " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 2
+      else if (ansArr[i + 1] == " Yes " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 1] == " No " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question3
+      else if (ansArr[i + 2] == " Yes " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 2] == " No " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 4
+      else if (ansArr[i + 3] == " Yes " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 3] == " No " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 5
+      else if (ansArr[i + 4] == " Less than 15 " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 4] == " 15-25 " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 4] == " Above 25 " && count > 0) {
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 6
+      else if (ansArr[i + 5] == " Yes " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 5] == " No " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 7
+      else if (ansArr[i + 6] == " Office hours " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 6] == " Tutoring " && count > 0) {
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 6] == " Ask classmates " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 8
+      else if (ansArr[i + 7] == " Yes " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 7] == " No " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 9
+      else if (ansArr[i + 8] == " Yes " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 8] == " No " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 10
+      else if (ansArr[i + 9] == " Yes " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 9] == " No " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 11
+      else if (ansArr[i + 10] == " Yes " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 10] == " No " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 12
+      else if (ansArr[i + 11] == " Yes " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 11] == " No " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 13
+      else if (ansArr[i + 12] == " Yes " && count > 0) {
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 12] == " No " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      //Question 14
+      else if (ansArr[i + 13] == " Worsened " && count > 0) {
+        $(".OC").append(`<div class="smallBox"> </div>`);
+        $(".OCH").append(`<div class="smallBox"> </div>`);
+        count--;
+      } else if (ansArr[i + 13] == " Improved " && count > 0) {
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".OA").append(`<div class="smallBox"> </div>`);
+        $(".OS").append(`<div class="smallBox"> </div>`);
+        $(".OH").append(`<div class="smallBox"> </div>`);
+        $(".FB").append(`<div class="smallBox"> </div>`);
+        $(".HFtri").append(`<div class="smallBox"> </div>`);
+        count--;
+      }
+      $(".learningStats").toggleClass("hide");
+      $(".sub-btn").toggleClass("hide");
+    }
+  });
+});
+
+
+  </script>
+  <style>
+    :root {
+  font-family: "Open Sans", sans-serif;
+}
+
+.pagetop {
+  display: flex;
+  flex-flow: nowrap;
+  justify-content: center;
+  width: 95vw;
+  margin: auto 2em;
+}
+
+.logoSec {
+  flex: 0 1 33%;
+  display: flex;
+  padding: 0.25em;
+  justify-content: left;
+}
+span {
+  padding-top: 1.75em;
+}
+
+nav {
+  /* as a item */
+  flex: 0 1 50%;
+  align-items: center;
+  /* as an container */
+  display: flex;
+  flex-flow: nowrap;
+  justify-content: space-evenly;
+}
+
+.btnSec {
+  flex: 0 1 35%;
+  text-align: right;
+  padding: 1.75em;
+}
+
+.btnSec button:nth-child(2) {
+  background-color: #324d79;
+  color: #ffffff;
+}
+.btnSec button:nth-child(1) {
+  color: #324d79;
+  background-color: #ffffff;
+  outline: solid 0.005em #0e4174;
+}
+
+.content {
+  width: 100vw;
+  display: flex;
+  flex-flow: wrap;
+  margin: 2em auto;
+  justify-content: center;
+}
+
+iframe {
+  margin: 2em auto;
+}
+
+.learningStats {
+  flex: 1 1 40%; /* as a item */
+
+  display: flex; /* as a container */
+  justify-content: left;
+  text-align: center;
+  /* flex-flow: wrap; */
+  flex-direction: column;
+  margin-top: 2em;
+  padding: 5em;
+}
+.info {
+  display: flex;
+  flex-flow: wrap;
+  padding: 1em;
+  background: #324d7969;
+  color:whitesmoke;
+}
+
+h1 {
+  font-weight: 600;
+  font-size: 2em;
+  padding: 0.5em;
+  background-color: #324d79;
+  color: #ffffff;
+}
+
+h2 {
+  color: #324d79;
+  font-size: 1.75em;
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.rectangle {
+  background-color: grey;
+  height: 0.5em;
+  width: 3em;
+  justify-content: left;
+}
+
+/* .avatar {
+  flex: 1 1 50%;
+  margin-top: 2em;
+  text-align: center;
+  padding: 0.5em;
+} */
+
+.largeBox {
+  flex: 1 1 50%; /* as an item */
+  background-color: gainsboro;
+  height: 2em;
+  width: 4em;
+
+  display: flex; /* as a container*/
+  /* position: absolute; */
+}
+
+.smallBox {
+  background-color: #324d79;
+  height: 1.9em;
+  width: 1.5em;
+  margin: 0.06em;
+  align-self: left;
+}
+
+.categories {
+  flex: 1 1 30%;
+}
+
+p {
+  text-align: center;
+  padding: 0.85em;
+}
+
+img {
+  width: 100%;
+}
+
+.logo {
+  width: fit-content;
+}
+
+
+.quiz {
+  width: 43rem;
+  height: 25rem;
+  margin: .1rem auto;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  padding: 0.5rem;
+  font-size: 2em;
+  line-height: 1em;
+
+  /*background: linear-gradient(to bottom right, #09807C, #12afaa);
+   border-radius: 0.7em;
+  box-shadow: 0 0 0.002em 0.025em; */
+}
+
+.questionbox {
+  display: flex;
+  justify-content: space-between;
+}
+.controls {
+  flex: 0 0 50%;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.nxt-btn {
+  height: 2rem;
+  background-color: #324d79;
+  font-size: 1.2rem;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  width: 5rem;
+  margin-top: -6em;
+}
+
+.clr-btn {
+  height: 2rem;
+  background-color: #ffffff;
+  font-size: 1.2rem;
+  color: #324d79;
+  border-radius: 0.5rem;
+  width: 5rem;
+  cursor: pointer;
+  margin-top: -6em;
+}
+
+.sub-btn {
+  height: 2em;
+  background-color: #ffffff;
+  font-size: 1rem;
+  color: #324d79;
+  cursor: pointer;
+}
+.strt-btn {
+  height: 2em;
+  font-size: 2rem;
+  width: fit-content;
+  background-color: #56bfab;
+  outline: solid 0.005em #324d79;
+  color: #111e3b;
+  cursor: pointer;
+  margin-top: -8em;
+  border-radius: 0.5em;
+}
+.ans-btns {
+  display: grid;
+  padding: 0.7em;
+  gap: 0.5em;
+  width: 18rem;
+  margin: 1em auto;
+}
+
+.ans-btns .btn {
+  border: 0.0265em solid black;
+  border-radius: 0.5em;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+.hide {
+  display: none;
+}
+ .btn:hover{
+  background-color: #56bfab;
+}  
+#question{
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: whitesmoke;
+}
+
+.bg {
+  background-color: #111e3bfb;
+  height: 110em;
+  width: 85em;
+  margin: 2em auto;
+}
+
+span{
+  color: whitesmoke;
+  font-weight: 800;
+}
+  </style>
+  </head>
+  <body>
+<div class="bg">
+<p style="text-align: center;"><span style="font-size: 2rem;"><span style="font-size: 19px;">Create an avatar in your likeness and then answer a few questions about how you like to learn.</span> </span>&nbsp;<iframe frameborder="0" src="https://itch.io/embed-upload/6931494?color=333333" allowfullscreen="" width="960" height="550"></iframe></p>
+<p style="text-align: center;"><span style="font-size: 19px;">How do you see yourself as a learner?</span></p>
+<article class="learningStats hide">
+<h1>LEARNING PREFERENCE &amp; MODALITY ALIGNMENT STATS</h1>
+<div class="info">
+<p class="categories">On-campus:</p>
+<div class="largeBox OC"></div>
+<p class="categories">On-campus Hybrid:</p>
+<div class="largeBox OCH"></div>
+<p class="categories">Online Asynchronous:</p>
+<div class="largeBox OA"></div>
+<p class="categories">Online Synchronous:</p>
+<div class="largeBox OS"></div>
+<p class="categories">Online Hybrid:</p>
+<div class="largeBox OH"></div>
+<p class="categories">Flex(Bimodal):</p>
+<div class="largeBox FB"></div>
+<p class="categories">HyFlex(Trimodal):</p>
+<div class="largeBox HFtri"></div>
+</div>
+<p style="text-align: left; color: whitesmoke;">These stats are meant to show you how your preferences might match up to some of the&nbsp; ways you can take classes, or "modalities," available to you at DePaul. Ultimately, how you take classes is going to depend on what's available and what fits your life and learning preferences best. All of the questions you thought about during this activity might help to reflect on as you choose your next classes.&nbsp;</p>
+<h2 style="color: #8d96a6;">Want to learn more about how you can take classes at DePaul and what each of these descriptions mean?&nbsp;<br><br></h2>
+<p style="text-align: center;color: #8d96a6;">Click <a href="https://resources.depaul.edu/teaching-commons/teaching-guides/course-design/Pages/course-modalities.aspx" target="_blank" rel="noopener">here </a>to read more.</p>
+</article>
+<div class="quiz">
+<div id="questionbox" class="hide">
+<p id="question">Question?</p>
+<div id="answer-btns" class="ans-btns"></div>
+</div>
+<div class="controls"><button id="strt-btn" class="strt-btn">Begin</button>
+   <button id="clr-btn" class="clr-btn hide">Clear</button>
+    <button id="nxt-btn" class="nxt-btn hide">Next</button> 
+    <button id="computeModality" class="sub-btn hide">Submit</button></div>
+</div>
+</div>
+</body>
+</html>
